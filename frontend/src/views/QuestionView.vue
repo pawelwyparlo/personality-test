@@ -1,9 +1,10 @@
 <script setup lang="ts">
-import { ref, watchEffect, watch } from 'vue';
+import { ref, reactive, watchEffect } from 'vue';
 import ButtonsWidget from '@/components/ButtonsWidget.vue';
 import TimeBar from '@/components/TimeBar.vue';
 import { Answers } from '@/enums';
 import { useRouter } from 'vue-router';
+import axios from 'axios';
 
 interface Question {
   content: string;
@@ -11,29 +12,48 @@ interface Question {
 }
 
 const ANSWERS_MAP = {
-  1: Answers.Inaccurate,
-  2: Answers.VeryInaccurate,
-  3: Answers.Neutral,
-  4: Answers.Accurate,
-  5: Answers.VeryAccurate,
+  Inaccurate: 1,
+  VeryInaccurate: 2,
+  Neutral: 3,
+  None: 3,
+  Accurate: 4,
+  VeryAccurate: 5,
 };
 
-import { reactive } from 'vue';
+const submitAnswers = () => {
+  const answersPayload = questions.map((question: Question, index: number) => ({
+    id: index + 1,
+    value: ANSWERS_MAP[question.answer as keyof typeof ANSWERS_MAP],
+  }));
+  axios
+    .post(
+      'http://127.0.0.1:5000/ipip/results',
+      {
+        sex: 'Male',
+        age: 20,
+        answers: answersPayload,
+      },
+      {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      }
+    )
+    .then((results) => console.log(results))
+    .catch((error) => console.error({ error }));
+};
 
 const questions = reactive<Question[]>([]);
 
 watchEffect(() => {
-  fetch('http://127.0.0.1:5000/ipip/questions').then((res) => res.json()).then((data) => {
-    data.forEach((question: string) => {
-      questions.push({content: question, answer: Answers.Default })
-    });    
-  })
-})
-
-watch(questions, (questionsUpdated) => {
-  console.log(questionsUpdated)
-})
-
+  fetch('http://127.0.0.1:5000/ipip/questions')
+    .then((res) => res.json())
+    .then((data) => {
+      data.forEach((question: string) => {
+        questions.push({ content: question, answer: Answers.Default });
+      });
+    });
+});
 
 const currentQuestionIndex = ref<number>(0);
 const currentAnswer = ref<Answers>(Answers.Default);
@@ -54,6 +74,7 @@ const setCurrentAnswer = (value: string) => {
 
 const answerQuestion = (answer: Answers) => {
   if (currentQuestionIndex.value === questions.length - 1) {
+    submitAnswers();
     router.push('results');
   }
 
@@ -68,7 +89,6 @@ const handleTimeUp = (isTimeUp: boolean) => {
     answerQuestion(Answers.Inaccurate);
   }
 };
-
 </script>
 
 <template>
