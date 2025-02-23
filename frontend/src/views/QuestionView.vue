@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref, watchEffect, watch } from 'vue';
 import ButtonsWidget from '@/components/ButtonsWidget.vue';
 import TimeBar from '@/components/TimeBar.vue';
 import { Answers } from '@/enums';
@@ -10,14 +10,22 @@ interface Question {
   answer: Answers;
 }
 
-const questions = ref<Question[]>([
-  { content: 'What is your favorite color?', answer: Answers.Default },
-  { content: 'Do you prefer cats or dogs?', answer: Answers.Default },
-  {
-    content: 'What is your dream vacation destination?',
-    answer: Answers.Default,
-  },
-]);
+import { reactive } from 'vue';
+
+const questions = reactive<Question[]>([]);
+
+watchEffect(() => {
+  fetch('http://127.0.0.1:5000/ipip/questions').then((res) => res.json()).then((data) => {
+    data.forEach((question: string) => {
+      questions.push({content: question, answer: Answers.Default })
+    });    
+  })
+})
+
+watch(questions, (questionsUpdated) => {
+  console.log(questionsUpdated)
+})
+
 
 const currentQuestionIndex = ref<number>(0);
 const currentAnswer = ref<Answers>(Answers.Default);
@@ -37,11 +45,11 @@ const setCurrentAnswer = (value: string) => {
 };
 
 const answerQuestion = (answer: Answers) => {
-  if (currentQuestionIndex.value === questions.value.length - 1) {
+  if (currentQuestionIndex.value === questions.length - 1) {
     router.push('results');
   }
 
-  questions.value[currentQuestionIndex.value].answer = answer;
+  questions[currentQuestionIndex.value].answer = answer;
   currentQuestionIndex.value += 1;
   currentAnswer.value = Answers.Default;
   setElapsed(0);
@@ -52,6 +60,7 @@ const handleTimeUp = (isTimeUp: boolean) => {
     answerQuestion(Answers.Inaccurate);
   }
 };
+
 </script>
 
 <template>
