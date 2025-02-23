@@ -10,6 +10,14 @@ interface Question {
   answer: Answers;
 }
 
+const ANSWERS_MAP = {
+  1: Answers.Inaccurate,
+  2: Answers.VeryInaccurate,
+  3: Answers.Neutral,
+  4: Answers.Accurate,
+  5: Answers.VeryAccurate,
+};
+
 import { reactive } from 'vue';
 
 const questions = reactive<Question[]>([]);
