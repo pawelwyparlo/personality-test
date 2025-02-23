@@ -1,23 +1,59 @@
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref, reactive, watchEffect } from 'vue';
 import ButtonsWidget from '@/components/ButtonsWidget.vue';
 import TimeBar from '@/components/TimeBar.vue';
 import { Answers } from '@/enums';
 import { useRouter } from 'vue-router';
+import axios from 'axios';
 
 interface Question {
   content: string;
   answer: Answers;
 }
 
-const questions = ref<Question[]>([
-  { content: 'What is your favorite color?', answer: Answers.Default },
-  { content: 'Do you prefer cats or dogs?', answer: Answers.Default },
-  {
-    content: 'What is your dream vacation destination?',
-    answer: Answers.Default,
-  },
-]);
+const ANSWERS_MAP = {
+  Inaccurate: 1,
+  VeryInaccurate: 2,
+  Neutral: 3,
+  None: 3,
+  Accurate: 4,
+  VeryAccurate: 5,
+};
+
+const submitAnswers = () => {
+  const answersPayload = questions.map((question: Question, index: number) => ({
+    id: index + 1,
+    value: ANSWERS_MAP[question.answer as keyof typeof ANSWERS_MAP],
+  }));
+  axios
+    .post(
+      'http://127.0.0.1:5000/ipip/results',
+      {
+        sex: 'Male',
+        age: 20,
+        answers: answersPayload,
+      },
+      {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      }
+    )
+    .then((results) => console.log(results))
+    .catch((error) => console.error({ error }));
+};
+
+const questions = reactive<Question[]>([]);
+
+watchEffect(() => {
+  fetch('http://127.0.0.1:5000/ipip/questions')
+    .then((res) => res.json())
+    .then((data) => {
+      data.forEach((question: string) => {
+        questions.push({ content: question, answer: Answers.Default });
+      });
+    });
+});
 
 const currentQuestionIndex = ref<number>(0);
 const currentAnswer = ref<Answers>(Answers.Default);
@@ -37,11 +73,12 @@ const setCurrentAnswer = (value: string) => {
 };
 
 const answerQuestion = (answer: Answers) => {
-  if (currentQuestionIndex.value === questions.value.length - 1) {
+  if (currentQuestionIndex.value === questions.length - 1) {
+    submitAnswers();
     router.push('results');
   }
 
-  questions.value[currentQuestionIndex.value].answer = answer;
+  questions[currentQuestionIndex.value].answer = answer;
   currentQuestionIndex.value += 1;
   currentAnswer.value = Answers.Default;
   setElapsed(0);
