@@ -11,41 +11,40 @@ def get_questions():
 
 @bp.route('/results', methods=['POST'])
 def get_results():
+    QUESTIONS_COUNT = 121
+    SEX_CHOICES = frozenset(['male', 'female'])
+    
     body = request.get_json()
 
     sex, age = body.get('sex'), body.get('age')
     if not sex or age is None:
         return Response("Missing sex or age parameter", status=400)
 
-    if not sex.lower() in SEX_CHOICES:
+    sex = sex.lower()
+    if sex not in SEX_CHOICES:
         return Response("Invalid sex parameter", status=400)
 
     if not isinstance(age, int) or age < 10 or age > 100:
-        return Response("Invalid age parameter")
+        return Response("Invalid age parameter", status=400)
     
-    sex, age = int(sex), int(age)
-
     # Answer data item: {id: int, value: int}
     answers_data: List[Dict[str, int]] = body.get('answers', [])
 
-    if answers_data is None or len(answers_data) != 120:
+    if not answers_data or len(answers_data) != 120:
         return Response("Invalid answers data", status=400)
     
     # Ensure answers_data contains expected number of responses
-    QUESTIONS_COUNT = 121
-    SEX_CHOICES = frozenset(['male', 'female'])
     Q = [0] * QUESTIONS_COUNT
 
     # --- Store answers in Q array ---
-    for ind, ans_val in answers_data.items():
+    for item in answers_data:
         try:
-            ind = int(ind)
-            ans_val = int(ans_val)
+            ind, ans_val = int(item['id']), int(item['value'])
+            if ind < 1 or ind > 120:
+                return Response(f"Invalid question index {ind}", status=400)
             Q[ind] = ans_val
-        except ValueError:
-            Response(f"Invalid question object {ind: ans_val}", status=400)
-        except ind < 1 or ind > 120:
-            Response(f"Invalid question index {ind}", status=400)
+        except (ValueError, KeyError):
+            return Response(f"Invalid question object {item}", status=400)
 
     # --- Calculate facet scores ---
     ss = [0] * QUESTIONS_COUNT
@@ -72,7 +71,7 @@ def get_results():
 
     # --- Calculate normative scores ---
 
-    if sex == "Male" and age < 21:
+    if sex == "male" and age < 21:
         norm = (
             0,
             67.84,
@@ -146,8 +145,7 @@ def get_results():
             3.24,
             4.02,
         )
-        Category = "males less than 21 years of age"
-    elif sex == "Male" and 21 <= age <= 40:
+    elif sex == "male" and 21 <= age <= 40:
         norm = (
             0,
             66.97,
@@ -221,8 +219,7 @@ def get_results():
             3.31,
             4.03,
         )
-        Category = "men between 21 and 40 years of age"
-    elif sex == "Male" and 41 <= age <= 60:
+    elif sex == "male" and 41 <= age <= 60:
         norm = (
             0,
             64.11,
@@ -296,8 +293,7 @@ def get_results():
             3.13,
             3.78,
         )
-        Category = "men between 41 and 60 years of age"
-    elif sex == "Male" and age > 60:
+    elif sex == "male" and age > 60:
         norm = (
             0,
             58.42,
@@ -371,8 +367,7 @@ def get_results():
             2.76,
             3.61,
         )
-        Category = "men over 60 years of age"
-    elif sex == "Female" and age < 21:
+    elif sex == "female" and age < 21:
         norm = (
             0,
             73.41,
@@ -446,8 +441,7 @@ def get_results():
             3.19,
             4.01,
         )
-        Category = "females less than 21 years of age"
-    elif sex == "Female" and 21 <= age <= 40:
+    elif sex == "female" and 21 <= age <= 40:
         norm = (
             0,
             72.14,
@@ -521,8 +515,7 @@ def get_results():
             3.23,
             4.18,
         )
-        Category = "women between 21 and 40 years of age"
-    elif sex == "Female" and 41 <= age <= 60:
+    elif sex == "female" and 41 <= age <= 60:
         norm = (
             0,
             67.38,
@@ -596,8 +589,7 @@ def get_results():
             3.13,
             3.86,
         )
-        Category = "women between 41 and 60 years of age"
-    elif sex == "Female" and age > 60:
+    elif sex == "female" and age > 60:
         norm = (
             0,
             63.48,
@@ -671,7 +663,6 @@ def get_results():
             3.15,
             3.66,
         )
-        Category = "women over 60 years of age"
 
     if not norm:
         return Response("Invalid sex or age range", status=400)
