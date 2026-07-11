@@ -5,6 +5,7 @@ import { RouterProvider } from 'react-router'
 
 import './theme/global.css'
 import { ApiError } from './api/client'
+import { ClerkGate } from './auth/ClerkGate'
 import { router } from './router'
 
 // Client errors (4xx) are definitive — a missing report stays missing, so
@@ -28,8 +29,10 @@ if (!rootEl) throw new Error('Root element #root not found')
 
 createRoot(rootEl).render(
   <StrictMode>
-    <QueryClientProvider client={queryClient}>
-      <RouterProvider router={router} />
-    </QueryClientProvider>
+    <ClerkGate>
+      <QueryClientProvider client={queryClient}>
+        <RouterProvider router={router} />
+      </QueryClientProvider>
+    </ClerkGate>
   </StrictMode>,
 )

@@ -15,7 +15,7 @@ not need the SDK installed, and nothing fails at app import time.
 from __future__ import annotations
 
 import json
-from typing import Any
+from typing import Any, AsyncIterator
 
 from app.llm.base import LLMUnavailable
 
@@ -80,3 +80,31 @@ class VertexAIClient:
         if not isinstance(parsed, dict):
             raise LLMUnavailable("Vertex AI returned a non-object JSON value")
         return parsed
+
+    async def stream_text(
+        self, system: str, messages: list[dict[str, str]]
+    ) -> AsyncIterator[str]:
+        from google.genai import types
+
+        # Map our chat roles to the SDK's ("coach" -> "model"); the system prompt
+        # goes in config, not the turn list.
+        contents = [
+            types.Content(
+                role="model" if m["role"] == "coach" else "user",
+                parts=[types.Part.from_text(text=m["content"])],
+            )
+            for m in messages
+        ]
+        config = types.GenerateContentConfig(system_instruction=system)
+        try:
+            stream = await self._client.aio.models.generate_content_stream(
+                model=self._model,
+                contents=contents,
+                config=config,
+            )
+            async for chunk in stream:
+                text = getattr(chunk, "text", None)
+                if text:
+                    yield text
+        except Exception as exc:
+            raise LLMUnavailable(f"Vertex AI streaming failed: {exc}") from exc

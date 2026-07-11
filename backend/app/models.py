@@ -22,6 +22,8 @@ from sqlalchemy import (
     Enum,
     ForeignKey,
     Integer,
+    String,
+    Text,
     UniqueConstraint,
     func,
 )
@@ -47,11 +49,21 @@ class RunStatus(str, enum.Enum):
     abandoned = "abandoned"
 
 
+class CoachRole(str, enum.Enum):
+    user = "user"
+    coach = "coach"
+
+
 class Profile(Base):
     __tablename__ = "profiles"
 
     id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
+    )
+    # The Clerk Account that has claimed this Profile (ADR-0002). Null until the
+    # Coach is created; unique so an Account claims exactly one Profile.
+    clerk_user_id: Mapped[str | None] = mapped_column(
+        String(255), nullable=True, unique=True, index=True
     )
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), server_default=func.now(), nullable=False
@@ -59,6 +71,9 @@ class Profile(Base):
 
     test_runs: Mapped[list[TestRun]] = relationship(
         back_populates="profile", cascade="all, delete-orphan"
+    )
+    coach: Mapped[Coach | None] = relationship(
+        back_populates="profile", cascade="all, delete-orphan", uselist=False
     )
 
 
@@ -132,3 +147,62 @@ class Answer(Base):
         UniqueConstraint("run_id", "item_id", name="uq_answers_run_item"),
         CheckConstraint("value >= 1 AND value <= 5", name="ck_answers_value_range"),
     )
+
+
+class Coach(Base):
+    """The per-Profile AI companion (default name "Sol").
+
+    A Profile has at most one Coach (unique ``profile_id``). Its trait context is
+    not stored here — it is derived at request time from the Profile's latest
+    completed Test Run (CONTEXT.md: one trait context, not an archive). Chat
+    history (:class:`CoachMessage`) survives retakes.
+    """
+
+    __tablename__ = "coaches"
+
+    id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
+    )
+    profile_id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True),
+        ForeignKey("profiles.id", ondelete="CASCADE"),
+        nullable=False,
+        unique=True,
+        index=True,
+    )
+    name: Mapped[str] = mapped_column(String(80), nullable=False, default="Sol")
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now(), nullable=False
+    )
+
+    profile: Mapped[Profile] = relationship(back_populates="coach")
+    messages: Mapped[list[CoachMessage]] = relationship(
+        back_populates="coach",
+        cascade="all, delete-orphan",
+        order_by="CoachMessage.created_at",
+    )
+
+
+class CoachMessage(Base):
+    """One turn in a Coach chat — a ``user`` message or a ``coach`` reply."""
+
+    __tablename__ = "coach_messages"
+
+    id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
+    )
+    coach_id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True),
+        ForeignKey("coaches.id", ondelete="CASCADE"),
+        nullable=False,
+        index=True,
+    )
+    role: Mapped[CoachRole] = mapped_column(
+        Enum(CoachRole, name="coach_role"), nullable=False
+    )
+    content: Mapped[str] = mapped_column(Text, nullable=False)
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now(), nullable=False
+    )
+
+    coach: Mapped[Coach] = relationship(back_populates="messages")

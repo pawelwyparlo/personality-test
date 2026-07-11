@@ -23,17 +23,26 @@ defaulting to `http://localhost:8000` for host-run dev; Compose sets it to
 
 ## Layout
 
-- `src/main.tsx` — entry (Query client + Router providers)
-- `src/router.tsx` — route table
-- `src/components/AppShell.tsx` — top-nav shell (Report/Coach); Start and Test
-  render their own full-bleed chrome
+- `src/main.tsx` — entry (ClerkGate + Query client + Router providers)
+- `src/router.tsx` — route table (every screen renders its own full-bleed chrome)
 - `src/routes/` — `StartPage` (2a), `TestPage` (2b), `ScoringPage` (2c),
-  `ReportPage`, `CoachPage`
+  `ReportPage` (2d), `CoachPage` (2f intro / 2g workspace, in `routes/coach/`)
+- `src/auth/ClerkGate.tsx` — mounts `ClerkProvider` only when a publishable key
+  is set, and bridges the session token to the API client
 - `src/components/Slider.tsx` — continuous 0–100 slider mapped to a 1–5 Answer
 - `src/lib/useCountdown.ts` — the 30s soft timer (rAF; TimeBar semantics)
 - `src/store/runStore.ts` — zustand store for the active Test Run
-- `src/api/` — typed API client + `ensureProfileId` (localStorage Profile)
+- `src/api/` — typed API client, `coach.ts` (coach endpoints + SSE stream),
+  `ensureProfileId` (localStorage Profile)
 - `src/theme/tokens.css` — design tokens (colors, radii, sticker shadows, type)
+
+## Coach (Clerk)
+
+The coach account gate mounts Clerk only when `VITE_CLERK_PUBLISHABLE_KEY` is
+set (`clerkEnabled` in `src/config.ts`). Keyless, `/coach` shows the intro with
+an on-tone setup card and never renders a Clerk component — nothing crashes. Set
+the two Clerk keys (`VITE_CLERK_PUBLISHABLE_KEY` here, `CLERK_SECRET_KEY` on the
+backend) to enable sign-in, coach creation, and chat.
 
 ## Test mode
 

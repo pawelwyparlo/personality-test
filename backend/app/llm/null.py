@@ -7,7 +7,7 @@ deterministic text bank. Constructing it is always safe.
 
 from __future__ import annotations
 
-from typing import Any
+from typing import Any, AsyncIterator
 
 from app.llm.base import LLMUnavailable
 
@@ -18,4 +18,9 @@ class NullClient:
     async def generate_structured(
         self, prompt: str, schema: dict[str, Any]
     ) -> dict[str, Any]:
+        raise LLMUnavailable("no LLM backend configured")
+
+    def stream_text(
+        self, system: str, messages: list[dict[str, str]]
+    ) -> AsyncIterator[str]:
         raise LLMUnavailable("no LLM backend configured")
