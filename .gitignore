@@ -1,0 +1,26 @@
+# Environment
+.env
+.env.local
+*.env
+
+# Node
+node_modules/
+frontend/dist/
+*.tsbuildinfo
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Editor / OS
+.DS_Store
+.idea/
+.vscode/

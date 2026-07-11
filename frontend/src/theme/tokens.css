@@ -1,0 +1,40 @@
+/*
+ * Design tokens — derived from the Big Five design-handoff direction.
+ * "Sticker" aesthetic: warm paper background, white cards with soft offset
+ * shadows, a green accent, generous rounding on cards and pill controls.
+ */
+:root {
+  /* Surfaces */
+  --color-bg: #efece4; /* page background — warm paper */
+  --color-card: #ffffff; /* cards, panels */
+  --color-tint: #f3f8f4; /* accent-tinted surface */
+
+  /* Accent */
+  --color-accent: #5aa17a;
+  --color-accent-dark: #3f7d5c;
+
+  /* Text */
+  --color-ink: #2b2b2b; /* primary text */
+  --color-secondary: #6b6660; /* secondary / muted text */
+
+  /* Status */
+  --color-warn: #b58a3c;
+
+  /* Radii */
+  --radius-card: 16px;
+  --radius-card-sm: 14px;
+  --radius-pill: 26px;
+  --radius-pill-sm: 22px;
+
+  /* Offset "sticker" shadows */
+  --shadow-sticker: 4px 5px 0 rgba(43, 43, 43, 0.12);
+  --shadow-sticker-sm: 3px 3px 0 rgba(43, 43, 43, 0.1);
+
+  /* Typography */
+  --font-serif: 'Source Serif 4', Georgia, 'Times New Roman', serif;
+  --font-sans: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+
+  /* Layout */
+  --nav-height: 64px;
+  --content-max: 960px;
+}
