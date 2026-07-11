@@ -59,15 +59,33 @@ App degrades gracefully without keys: report falls back to text bank; coach gate
 5. **PR5 — Coach**: Clerk integration + account gate, 2f intro, 2g workspace (SSE chat, typing
    indicator, "knows: O·C·E·A·N" header, My report tab, coming-soon nav). *Gate: chat streams with
    trait-aware system prompt; retake updates coach context.*
-6. **PR6 — Quick form + polish**: IPIP-NEO-60 per research verdict (or explicit descope if
-   unsourceable), Playwright happy-path e2e, empty/error states, final copy pass.
+6. **PR6 — Quick form + polish**: IPIP-NEO-60 (Maples-Keller 2019) — items sourced from
+   ipip.ori.org, domain-level age×sex norms **derived** from Johnson's OSF IPIP-NEO-120 dataset
+   (no published norms exist), Quick report **domain-only** (2-item facets not shipped); see
+   ADR-0004. Playwright happy-path e2e, empty/error states, final copy pass. Descope to Full-only
+   if trustworthy derived norms prove infeasible.
 
 ## Execution model
 
 Orchestrator (this session) plans, reviews, merges. Opus `implementer` agents build each PR in an
 isolated worktree; `reviewer`/`verifier` agents check before merge (parity tests are the hard gate
-for PR2). The IPIP-NEO-60 research report (`docs/research/ipip-neo-60.md`, in flight) gates PR6's
-scope only — PRs 1–5 are unblocked.
+for PR2). Every UI-bearing PR is additionally verified pre-merge by a lightweight Sonnet agent that
+drives the running app via Playwright (navigates the real screens, asserts the happy path) — a
+runtime check on top of the unit/parity gates. The IPIP-NEO-60 research report
+(`docs/research/ipip-neo-60.md`, in flight) gates PR6's scope only — PRs 1–5 are unblocked.
+
+### Test mode
+
+When `VITE_TEST_MODE=true` (off by default; declared in `.env.example`) the UI exposes hidden
+testing controls so a full run can be driven fast without hand-answering 120 items:
+
+- On the question screen, an **"Autofill & finish"** button fills every remaining Item with a
+  random 1–5 Answer **through the normal answer path** (same commit semantics as the slider), then
+  jumps straight to scoring → report.
+- On the start screen, a demographics **prefill** (age + sex) so the run can begin in one click.
+
+These controls land in PR3 and are the hook the Playwright verifier uses to reach the report screen
+deterministically. With the flag unset they are absent from the DOM.
 
 ## Risks
 
