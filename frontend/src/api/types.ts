@@ -81,3 +81,32 @@ export interface Report {
   facets: FacetScore[]
   narrative: Narrative
 }
+
+// --- Coach ----------------------------------------------------------------- //
+
+export type CoachRole = 'user' | 'coach'
+
+export interface CoachMessage {
+  id: string
+  role: CoachRole
+  content: string
+  created_at: string
+}
+
+export interface TraitContext {
+  run_id: string
+  /** Domain percentiles keyed by letter (O/C/E/A/N). */
+  percentiles: Record<string, number>
+}
+
+export interface Coach {
+  id: string
+  name: string
+  messages: CoachMessage[]
+  trait_context: TraitContext
+}
+
+export interface CoachCreated {
+  id: string
+  name: string
+}

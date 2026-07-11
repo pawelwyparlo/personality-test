@@ -19,6 +19,26 @@ export class ApiError extends Error {
   }
 }
 
+/**
+ * A getter for the current Clerk session token, registered by the app once
+ * Clerk mounts (getToken is a hook, so it can't be called from a plain module).
+ * Keyless, this stays null and the coach endpoints go out unauthenticated —
+ * the backend answers 503 auth_not_configured, which the UI handles.
+ */
+type TokenGetter = () => Promise<string | null>
+let tokenGetter: TokenGetter | null = null
+
+export function setTokenGetter(getter: TokenGetter | null): void {
+  tokenGetter = getter
+}
+
+/** Authorization header with the Clerk session token, if one is available. */
+export async function authHeaders(): Promise<Record<string, string>> {
+  if (!tokenGetter) return {}
+  const token = await tokenGetter()
+  return token ? { authorization: `Bearer ${token}` } : {}
+}
+
 async function request<T>(path: string, init?: RequestInit): Promise<T> {
   const resp = await fetch(`${BASE}${path}`, {
     headers: { 'content-type': 'application/json' },
