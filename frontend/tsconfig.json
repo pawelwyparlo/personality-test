@@ -1,8 +1,7 @@
 {
-  "extends": "./tsconfig.app.json",
-  "compilerOptions": {
-    "strict": true,
-    "jsx": "preserve",
-    "types": ["vite/client"]
-  }
+  "files": [],
+  "references": [
+    { "path": "./tsconfig.app.json" },
+    { "path": "./tsconfig.node.json" }
+  ]
 }
