@@ -1,0 +1,62 @@
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-bigfive}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-bigfive}
+      POSTGRES_DB: ${POSTGRES_DB:-bigfive}
+    ports:
+      - "5432:5432"
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-bigfive} -d ${POSTGRES_DB:-bigfive}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    environment:
+      DATABASE_URL: ${DATABASE_URL:-postgresql+asyncpg://bigfive:bigfive@db:5432/bigfive}
+      GOOGLE_CLOUD_PROJECT: ${GOOGLE_CLOUD_PROJECT:-}
+      VERTEX_LOCATION: ${VERTEX_LOCATION:-us-central1}
+      CLERK_SECRET_KEY: ${CLERK_SECRET_KEY:-}
+    ports:
+      - "8000:8000"
+    volumes:
+      # Source mounted for --reload; the named volume keeps the image's .venv
+      # from being shadowed by the host mount.
+      - ./backend:/app
+      - backend-venv:/app/.venv
+    depends_on:
+      db:
+        condition: service_healthy
+    # Apply migrations, then serve with autoreload.
+    command: >
+      sh -c "alembic upgrade head &&
+             uvicorn app.main:app --reload --host 0.0.0.0 --port 8000"
+
+  frontend:
+    image: node:22-alpine
+    working_dir: /app
+    environment:
+      VITE_API_PROXY_TARGET: http://backend:8000
+    ports:
+      - "5173:5173"
+    volumes:
+      - ./frontend:/app
+      # Keep node_modules inside the container, not shadowed by the host mount.
+      - frontend-node-modules:/app/node_modules
+    # Install deps if missing, then run the Vite dev server exposed on all
+    # interfaces so the host browser can reach it.
+    command: sh -c "npm install && npm run dev -- --host"
+    depends_on:
+      - backend
+
+volumes:
+  db-data:
+  backend-venv:
+  frontend-node-modules:
