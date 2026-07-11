@@ -1,8 +1,0 @@
-{
-  "extends": "./tsconfig.app.json",
-  "compilerOptions": {
-    "strict": true,
-    "jsx": "preserve",
-    "types": ["vite/client"]
-  }
-}
