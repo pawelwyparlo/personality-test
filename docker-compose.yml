@@ -46,6 +46,7 @@ services:
     working_dir: /app
     environment:
       VITE_API_PROXY_TARGET: http://backend:8000
+      VITE_TEST_MODE: ${VITE_TEST_MODE:-false}
     ports:
       - "${FRONTEND_PORT:-5173}:5173"
     volumes:
