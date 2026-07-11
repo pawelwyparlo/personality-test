@@ -32,8 +32,10 @@ export function TestPage() {
   const [autofilling, setAutofilling] = useState(false)
 
   // Guards a single commit per item across the expiry-vs-click race: each item
-  // may be committed exactly once. Reset when the item changes.
-  const committedItemRef = useRef<number | null>(null)
+  // may be committed exactly once (ADR-0001). A Set — never cleared on advance —
+  // so a stale expiry from the previous item can't re-commit it after the
+  // per-item reset (that ordering produced duplicate POSTs and server 409s).
+  const committedItemsRef = useRef<Set<number>>(new Set())
 
   const item = items[index]
   const total = items.length
@@ -43,18 +45,17 @@ export function TestPage() {
     if (!runId || total === 0) navigate('/', { replace: true })
   }, [runId, total, navigate])
 
-  // Fresh slider (centered Neutral) and a clean commit guard for each new item.
+  // Fresh slider (centered Neutral) for each new item.
   useEffect(() => {
     setPercent(NEUTRAL_PERCENT)
-    committedItemRef.current = null
   }, [index])
 
   const advance = useCallback(
     async (value: number) => {
       if (!runId || !item) return
       // One commit per item — expiry and click can both fire.
-      if (committedItemRef.current === item.id) return
-      committedItemRef.current = item.id
+      if (committedItemsRef.current.has(item.id)) return
+      committedItemsRef.current.add(item.id)
       setBusy(true)
       try {
         await api.submitAnswer({ runId, item_id: item.id, value })
@@ -66,7 +67,7 @@ export function TestPage() {
         }
       } catch {
         // Allow a retry on failure by clearing the guard.
-        committedItemRef.current = null
+        committedItemsRef.current.delete(item.id)
       } finally {
         setBusy(false)
       }
