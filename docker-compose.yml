@@ -6,7 +6,8 @@ services:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-bigfive}
       POSTGRES_DB: ${POSTGRES_DB:-bigfive}
     ports:
-      - "5432:5432"
+      # Host port is overridable to avoid clashes with a local Postgres.
+      - "${DB_PORT:-5432}:5432"
     volumes:
       - db-data:/var/lib/postgresql/data
     healthcheck:
@@ -25,7 +26,8 @@ services:
       VERTEX_LOCATION: ${VERTEX_LOCATION:-us-central1}
       CLERK_SECRET_KEY: ${CLERK_SECRET_KEY:-}
     ports:
-      - "8000:8000"
+      # Host port is overridable to avoid clashes with another local service.
+      - "${BACKEND_PORT:-8000}:8000"
     volumes:
       # Source mounted for --reload; the named volume keeps the image's .venv
       # from being shadowed by the host mount.
@@ -45,7 +47,7 @@ services:
     environment:
       VITE_API_PROXY_TARGET: http://backend:8000
     ports:
-      - "5173:5173"
+      - "${FRONTEND_PORT:-5173}:5173"
     volumes:
       - ./frontend:/app
       # Keep node_modules inside the container, not shadowed by the host mount.
