@@ -86,6 +86,10 @@ class TestRun(Base):
     )
     # Full engine ScoreResult, persisted at completion; null until then.
     scores: Mapped[dict | None] = mapped_column(JSONB, nullable=True)
+    # Generated report narrative (pull_quote/paragraphs/strengths/watch_outs/
+    # source), written on first report request and reused thereafter so the copy
+    # is stable across reloads. Null until the report is first requested.
+    narrative: Mapped[dict | None] = mapped_column(JSONB, nullable=True)
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), server_default=func.now(), nullable=False
     )

@@ -2,12 +2,13 @@
 FROM ghcr.io/astral-sh/uv:python3.12-bookworm-slim
 
 # System dependencies.
-# NOTE: WeasyPrint (PDF report generation, added in a later PR) needs the
-# Pango/Cairo/GDK-Pixbuf native libraries here, e.g.:
-#   RUN apt-get update && apt-get install -y --no-install-recommends \
-#       libpango-1.0-0 libpangocairo-1.0-0 libgdk-pixbuf-2.0-0 libffi-dev \
-#       && rm -rf /var/lib/apt/lists/*
-# Not installed yet — keep the image slim until the report PR needs them.
+# WeasyPrint (report PDF generation, PR4) needs the Pango/Cairo/GDK-Pixbuf
+# native libraries at runtime. Fonts (DejaVu) make the deterministic template
+# render identically across hosts.
+RUN apt-get update && apt-get install -y --no-install-recommends \
+        libpango-1.0-0 libpangocairo-1.0-0 libgdk-pixbuf-2.0-0 \
+        libffi-dev libharfbuzz0b libfontconfig1 fonts-dejavu-core \
+    && rm -rf /var/lib/apt/lists/*
 
 ENV UV_COMPILE_BYTECODE=1 \
     UV_LINK_MODE=copy \

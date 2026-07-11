@@ -2,6 +2,7 @@ import type {
   AnswerCreate,
   FormItems,
   ProfileCreated,
+  Report,
   ScoreResult,
   TestRunCreated,
   TestRunStatus,
@@ -69,4 +70,9 @@ export const api = {
     }),
 
   getTestRun: (runId: string) => request<TestRunStatus>(`/test-runs/${runId}`),
+
+  getReport: (runId: string) => request<Report>(`/reports/${runId}`),
+
+  /** Absolute URL for the PDF download endpoint (used as an <a href>). */
+  reportPdfUrl: (runId: string) => `${BASE}/reports/${runId}/pdf`,
 }

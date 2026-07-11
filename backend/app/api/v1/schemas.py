@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import uuid
+from datetime import datetime
 
 from pydantic import BaseModel, Field
 
@@ -71,3 +72,24 @@ class TestRunStatus(BaseModel):
     item_count: int
     answered_count: int
     scores: ScoreResultOut | None = None
+
+
+class NarrativeOut(BaseModel):
+    """The narrative body of a report (LLM or text-bank; see ``source``)."""
+
+    pull_quote: str
+    paragraphs: list[str]
+    strengths: list[str]
+    watch_outs: list[str]
+    source: str  # "llm" | "textbank"
+
+
+class ReportOut(BaseModel):
+    """A completed run's report: scores plus the narrative body."""
+
+    run_id: uuid.UUID
+    form: Form
+    completed_at: datetime
+    domains: list[DomainScoreOut]
+    facets: list[FacetScoreOut]
+    narrative: NarrativeOut
