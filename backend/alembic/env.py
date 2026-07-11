@@ -8,6 +8,7 @@ from sqlalchemy.pool import NullPool
 
 from app.core.config import get_settings
 from app.core.db import Base
+from app import models  # noqa: F401  (registers tables on Base.metadata)
 
 # Alembic Config object, provides access to the .ini values.
 config = context.config

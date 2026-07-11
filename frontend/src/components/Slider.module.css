@@ -1,0 +1,93 @@
+.wrap {
+  width: 100%;
+  max-width: 640px;
+  margin-top: 14px;
+}
+
+.ends {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.9rem;
+  color: var(--color-secondary);
+}
+
+.track {
+  position: relative;
+  height: 44px;
+  margin-top: 8px;
+}
+
+/* The real <input type=range> sits on top, transparent, for full a11y +
+   keyboard + pointer support; the visual track/fill/thumb are drawn beneath. */
+.input {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  opacity: 0;
+  cursor: pointer;
+  z-index: 3;
+}
+
+.rail {
+  position: absolute;
+  top: 20px;
+  left: 0;
+  right: 0;
+  height: 6px;
+  background: var(--color-slider-track);
+  border-radius: 4px;
+}
+
+.fill {
+  position: absolute;
+  top: 20px;
+  left: 0;
+  height: 6px;
+  background: var(--color-slider-fill);
+  border-radius: 4px;
+}
+
+.ticks {
+  position: absolute;
+  top: 14px;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: space-between;
+  pointer-events: none;
+}
+
+.tick {
+  width: 2px;
+  height: 18px;
+  background: var(--color-tick);
+}
+
+.thumb {
+  position: absolute;
+  top: 8px;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: var(--color-accent);
+  border: var(--border-primary);
+  transform: translateX(-50%);
+  box-shadow: 2px 2px 0 rgba(43, 43, 43, 0.2);
+  pointer-events: none;
+}
+
+.input:focus-visible + .rail {
+  outline: 2px solid var(--color-accent-dark);
+  outline-offset: 6px;
+  border-radius: 6px;
+}
+
+.liveLabel {
+  font-size: 0.95rem;
+  color: var(--color-accent-dark);
+  margin-top: 6px;
+  text-align: center;
+  min-height: 1.4em;
+}

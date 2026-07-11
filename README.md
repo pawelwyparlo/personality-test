@@ -47,6 +47,40 @@ docs/       ANALYSIS.md · PLAN.md · adr/ (architecture decisions) · research/
 CONTEXT.md  domain glossary
 ```
 
+## Testing
+
+Backend API and scoring tests run with pytest. The API tests need a Postgres —
+they use a dedicated `bigfive_test` database (never the app's data) reachable on
+the host. With the Compose stack up:
+
+```bash
+docker compose exec -T db psql -U bigfive -d bigfive -c "CREATE DATABASE bigfive_test"  # one-time
+cd backend && DB_PORT=<host-db-port> .venv/bin/pytest   # DB_PORT matches your .env (default 5432)
+```
+
+Tests that need the database are skipped automatically if it is unreachable, so
+the scoring/parity/health tests still run without one.
+
+Frontend type-check + production build:
+
+```bash
+docker compose exec -T frontend npm run build
+```
+
+### Test mode (dev only)
+
+Set `VITE_TEST_MODE=true` in `.env` to expose hidden controls that drive a full
+run fast without hand-answering 120 items:
+
+- **Start screen** — demographics are prefilled (age 30, male) so a run begins in
+  one click.
+- **Test screen** — a dashed **"⚡ Autofill & finish"** button answers every
+  remaining item with a random 1–5 through the normal answer path, then completes
+  the run and jumps to the report.
+
+With the flag unset (the default) these controls are absent from the DOM. Never
+enable test mode in production.
+
 ## Documentation
 
 - **[docs/PLAN.md](docs/PLAN.md)** — development plan and PR sequence

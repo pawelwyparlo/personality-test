@@ -12,13 +12,30 @@
   /* Accent */
   --color-accent: #5aa17a;
   --color-accent-dark: #3f7d5c;
+  --color-tint-border: #d7e5db; /* divider inside tinted cards */
 
   /* Text */
   --color-ink: #2b2b2b; /* primary text */
   --color-secondary: #6b6660; /* secondary / muted text */
+  --color-muted: #8a847b; /* muted / meta text */
+  --color-faint: #b8b2a8; /* faint hints, helper text */
+
+  /* Borders */
+  --border-primary: 2.5px solid #2b2b2b;
+  --border-neutral: 2px solid #cfcabf;
+  --border-divider: #ece8e0;
+
+  /* Slider */
+  --color-slider-track: #e2ded5;
+  --color-slider-fill: #bfe0cc;
+  --color-tick: #d3cec4;
 
   /* Status */
   --color-warn: #b58a3c;
+
+  /* Button shadow (sticker press) */
+  --shadow-button: 2px 2px 0 rgba(43, 43, 43, 0.25);
+  --shadow-accent-card: 3px 3px 0 rgba(90, 161, 122, 0.35);
 
   /* Radii */
   --radius-card: 16px;
@@ -33,6 +50,7 @@
   /* Typography */
   --font-serif: 'Source Serif 4', Georgia, 'Times New Roman', serif;
   --font-sans: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-mono: ui-monospace, 'SF Mono', 'SFMono-Regular', 'Menlo', monospace;
 
   /* Layout */
   --nav-height: 64px;
