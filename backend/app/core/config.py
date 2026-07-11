@@ -24,8 +24,16 @@ class Settings(BaseSettings):
     cors_origins: list[str] = ["http://localhost:5173"]
 
     # LLM / Vertex AI — optional; report falls back to the text bank without them.
+    # Auth is either a service-account file (google_application_credentials, read
+    # by the SDK's default credentials) or an API key (vertex_api_key). With
+    # neither project+credentials nor an API key set, the factory yields a
+    # NullClient and the report uses the deterministic text bank.
     google_cloud_project: str = ""
     vertex_location: str = "us-central1"
+    google_application_credentials: str = ""
+    vertex_api_key: str = ""
+    # A current Gemini flash model; overridable per deployment.
+    vertex_model: str = "gemini-2.0-flash-001"
 
     # Clerk — optional; the coach gate shows a setup notice without them.
     clerk_secret_key: str = ""
