@@ -7,7 +7,7 @@ report only needs :meth:`generate_structured`.
 
 from __future__ import annotations
 
-from typing import Any, Protocol, runtime_checkable
+from typing import Any, AsyncIterator, Protocol, runtime_checkable
 
 
 class LLMUnavailable(RuntimeError):
@@ -35,5 +35,18 @@ class LLMClient(Protocol):
         ``schema`` is a JSON-Schema-style ``object`` definition. Returns the
         parsed object. Raises :class:`LLMUnavailable` if generation cannot be
         performed (no backend) or fails (network/parse error).
+        """
+        ...
+
+    def stream_text(
+        self, system: str, messages: list[dict[str, str]]
+    ) -> AsyncIterator[str]:
+        """Stream a plain-text reply token-by-token (the coach chat).
+
+        ``system`` is the system prompt; ``messages`` is a rolling chat window of
+        ``{"role": "user"|"coach", "content": ...}`` dicts in chronological
+        order. Yields text chunks as they arrive. Raises :class:`LLMUnavailable`
+        if no backend is configured (callers must check *before* streaming so
+        they can return a clean 503 rather than an aborted stream).
         """
         ...

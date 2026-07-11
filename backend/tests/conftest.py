@@ -17,7 +17,7 @@ import pytest_asyncio
 from httpx import ASGITransport
 from sqlalchemy.ext.asyncio import async_sessionmaker, create_async_engine
 
-from app.core.db import Base, get_session
+from app.core.db import Base, get_session, get_session_factory
 from app.main import app
 
 
@@ -56,11 +56,15 @@ async def db_session():
             yield session
 
     app.dependency_overrides[get_session] = override_get_session
+    # Streaming endpoints open their own session from the factory; point that at
+    # the test database too, so the coach reply persists where tests can read it.
+    app.dependency_overrides[get_session_factory] = lambda: factory
     try:
         async with factory() as session:
             yield session
     finally:
         app.dependency_overrides.pop(get_session, None)
+        app.dependency_overrides.pop(get_session_factory, None)
         async with engine.begin() as conn:
             await conn.run_sync(Base.metadata.drop_all)
         await engine.dispose()
