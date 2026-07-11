@@ -64,3 +64,20 @@ export interface TestRunStatus {
   answered_count: number
   scores: ScoreResult | null
 }
+
+export interface Narrative {
+  pull_quote: string
+  paragraphs: string[]
+  strengths: string[]
+  watch_outs: string[]
+  source: 'llm' | 'textbank'
+}
+
+export interface Report {
+  run_id: string
+  form: Form
+  completed_at: string
+  domains: DomainScore[]
+  facets: FacetScore[]
+  narrative: Narrative
+}
