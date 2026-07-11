@@ -1,0 +1,72 @@
+import type {
+  AnswerCreate,
+  FormItems,
+  ProfileCreated,
+  ScoreResult,
+  TestRunCreated,
+  TestRunStatus,
+} from './types'
+
+const BASE = '/api/v1'
+
+export class ApiError extends Error {
+  status: number
+  constructor(status: number, message: string) {
+    super(message)
+    this.status = status
+    this.name = 'ApiError'
+  }
+}
+
+async function request<T>(path: string, init?: RequestInit): Promise<T> {
+  const resp = await fetch(`${BASE}${path}`, {
+    headers: { 'content-type': 'application/json' },
+    ...init,
+  })
+  if (!resp.ok) {
+    let detail = resp.statusText
+    try {
+      const body = await resp.json()
+      if (body?.detail) detail = typeof body.detail === 'string' ? body.detail : JSON.stringify(body.detail)
+    } catch {
+      // non-JSON error body; keep statusText
+    }
+    throw new ApiError(resp.status, detail)
+  }
+  if (resp.status === 204) return undefined as T
+  return (await resp.json()) as T
+}
+
+export interface AnswerCreateArgs extends AnswerCreate {
+  runId: string
+}
+
+export const api = {
+  createProfile: () => request<ProfileCreated>('/profiles', { method: 'POST' }),
+
+  getFormItems: (form: string) =>
+    request<FormItems>(`/forms/${form}/items`),
+
+  createTestRun: (body: {
+    profile_id: string
+    form: string
+    age: number
+    sex: string
+  }) => request<TestRunCreated>('/test-runs', { method: 'POST', body: JSON.stringify(body) }),
+
+  submitAnswer: ({ runId, item_id, value }: AnswerCreateArgs) =>
+    request<void>(`/test-runs/${runId}/answers`, {
+      method: 'POST',
+      body: JSON.stringify({ item_id, value }),
+    }),
+
+  completeTestRun: (runId: string) =>
+    request<ScoreResult>(`/test-runs/${runId}/complete`, { method: 'POST' }),
+
+  abandonTestRun: (runId: string) =>
+    request<{ id: string; status: string }>(`/test-runs/${runId}/abandon`, {
+      method: 'POST',
+    }),
+
+  getTestRun: (runId: string) => request<TestRunStatus>(`/test-runs/${runId}`),
+}

@@ -1,0 +1,88 @@
+.wrap {
+  max-width: 640px;
+  margin: 0 auto;
+}
+
+.eyebrow {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--color-accent);
+  letter-spacing: 1px;
+  margin-bottom: 8px;
+}
+
+.h1 {
+  margin: 0 0 6px;
+}
+
+.note {
+  font-size: 0.9rem;
+  color: var(--color-muted);
+  margin: 0 0 24px;
+}
+
+.card {
+  background: var(--color-card);
+  border: var(--border-primary);
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-sticker);
+  padding: 24px 26px;
+}
+
+.cardTitle {
+  font-family: var(--font-serif);
+  font-size: 1.2rem;
+  margin: 0 0 18px;
+}
+
+.bar {
+  margin-bottom: 16px;
+}
+
+.barHead {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.95rem;
+  margin-bottom: 6px;
+}
+
+.barName {
+  font-weight: 500;
+}
+
+.barScore {
+  font-family: var(--font-mono);
+  color: var(--color-secondary);
+}
+
+.barTrack {
+  height: 10px;
+  background: var(--border-divider);
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.barFill {
+  height: 100%;
+  background: var(--color-accent);
+  border-radius: 6px;
+}
+
+.status {
+  background: var(--color-card);
+  border: var(--border-neutral);
+  border-radius: var(--radius-card);
+  padding: 28px 26px;
+  text-align: center;
+}
+
+.statusText {
+  color: var(--color-secondary);
+  margin: 0 0 16px;
+}
+
+.link {
+  color: var(--color-accent-dark);
+  font-weight: 600;
+  text-decoration: none;
+}
