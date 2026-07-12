@@ -32,7 +32,8 @@ from app.api.v1.schemas import (
 from app.core.db import get_session
 from app.models import Answer, Form, Profile, RunStatus, TestRun
 from app.scoring import forms
-from app.scoring.engine import score
+from app.scoring.engine import score as score_full
+from app.scoring.engine_quick import score as score_quick
 from app.scoring.serialize import score_result_to_dict
 
 router = APIRouter()
@@ -61,10 +62,7 @@ async def create_test_run(
     payload: TestRunCreate,
     session: AsyncSession = Depends(get_session),
 ) -> TestRunCreated:
-    """Start a Test Run. Quick is not implemented yet (ADR-0004) -> 501."""
-    if payload.form == Form.quick:
-        raise HTTPException(status_code=501, detail="Quick form coming soon")
-
+    """Start a Test Run for the chosen Form (full = 120, quick = 60)."""
     profile = await session.get(Profile, payload.profile_id)
     if profile is None:
         raise HTTPException(status_code=404, detail="profile not found")
@@ -140,7 +138,9 @@ async def complete_test_run(
             detail=f"run is incomplete: {missing} of {len(expected)} items unanswered",
         )
 
-    result = score(answers, run.age, run.sex.value)
+    # Full scores domains + 30 facets; Quick is domain-only (ADR-0004).
+    scorer = score_quick if run.form == Form.quick else score_full
+    result = scorer(answers, run.age, run.sex.value)
     scores_dict = score_result_to_dict(result, str(run_id))
 
     run.scores = scores_dict
