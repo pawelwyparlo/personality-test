@@ -1,0 +1,602 @@
+[
+  {
+    "id": 1,
+    "text": "Worry about things.",
+    "domain": "N",
+    "facet": {
+      "number": 1,
+      "name": "Anxiety"
+    },
+    "keyed": "+"
+  },
+  {
+    "id": 2,
+    "text": "Get stressed out easily.",
+    "domain": "N",
+    "facet": {
+      "number": 1,
+      "name": "Anxiety"
+    },
+    "keyed": "+"
+  },
+  {
+    "id": 3,
+    "text": "Get angry easily.",
+    "domain": "N",
+    "facet": {
+      "number": 2,
+      "name": "Anger"
+    },
+    "keyed": "+"
+  },
+  {
+    "id": 4,
+    "text": "Lose my temper.",
+    "domain": "N",
+    "facet": {
+      "number": 2,
+      "name": "Anger"
+    },
+    "keyed": "+"
+  },
+  {
+    "id": 5,
+    "text": "Often feel blue.",
+    "domain": "N",
+    "facet": {
+      "number": 3,
+      "name": "Depression"
+    },
+    "keyed": "+"
+  },
+  {
+    "id": 6,
+    "text": "Dislike myself.",
+    "domain": "N",
+    "facet": {
+      "number": 3,
+      "name": "Depression"
+    },
+    "keyed": "+"
+  },
+  {
+    "id": 7,
+    "text": "Find it difficult to approach others.",
+    "domain": "N",
+    "facet": {
+      "number": 4,
+      "name": "Self-Consciousness"
+    },
+    "keyed": "+"
+  },
+  {
+    "id": 8,
+    "text": "Am easily intimidated.",
+    "domain": "N",
+    "facet": {
+      "number": 4,
+      "name": "Self-Consciousness"
+    },
+    "keyed": "+"
+  },
+  {
+    "id": 9,
+    "text": "Rarely overindulge.",
+    "domain": "N",
+    "facet": {
+      "number": 5,
+      "name": "Immoderation"
+    },
+    "keyed": "-"
+  },
+  {
+    "id": 10,
+    "text": "Am able to control my cravings.",
+    "domain": "N",
+    "facet": {
+      "number": 5,
+      "name": "Immoderation"
+    },
+    "keyed": "-"
+  },
+  {
+    "id": 11,
+    "text": "Remain calm under pressure.",
+    "domain": "N",
+    "facet": {
+      "number": 6,
+      "name": "Vulnerability"
+    },
+    "keyed": "-"
+  },
+  {
+    "id": 12,
+    "text": "Am calm even in tense situations.",
+    "domain": "N",
+    "facet": {
+      "number": 6,
+      "name": "Vulnerability"
+    },
+    "keyed": "-"
+  },
+  {
+    "id": 13,
+    "text": "Make friends easily.",
+    "domain": "E",
+    "facet": {
+      "number": 1,
+      "name": "Friendliness"
+    },
+    "keyed": "+"
+  },
+  {
+    "id": 14,
+    "text": "Act comfortably with others.",
+    "domain": "E",
+    "facet": {
+      "number": 1,
+      "name": "Friendliness"
+    },
+    "keyed": "+"
+  },
+  {
+    "id": 15,
+    "text": "Love large parties.",
+    "domain": "E",
+    "facet": {
+      "number": 2,
+      "name": "Gregariousness"
+    },
+    "keyed": "+"
+  },
+  {
+    "id": 16,
+    "text": "Avoid crowds.",
+    "domain": "E",
+    "facet": {
+      "number": 2,
+      "name": "Gregariousness"
+    },
+    "keyed": "-"
+  },
+  {
+    "id": 17,
+    "text": "Take charge.",
+    "domain": "E",
+    "facet": {
+      "number": 3,
+      "name": "Assertiveness"
+    },
+    "keyed": "+"
+  },
+  {
+    "id": 18,
+    "text": "Try to lead others.",
+    "domain": "E",
+    "facet": {
+      "number": 3,
+      "name": "Assertiveness"
+    },
+    "keyed": "+"
+  },
+  {
+    "id": 19,
+    "text": "Am always busy.",
+    "domain": "E",
+    "facet": {
+      "number": 4,
+      "name": "Activity Level"
+    },
+    "keyed": "+"
+  },
+  {
+    "id": 20,
+    "text": "Am always on the go.",
+    "domain": "E",
+    "facet": {
+      "number": 4,
+      "name": "Activity Level"
+    },
+    "keyed": "+"
+  },
+  {
+    "id": 21,
+    "text": "Love excitement.",
+    "domain": "E",
+    "facet": {
+      "number": 5,
+      "name": "Excitement-Seeking"
+    },
+    "keyed": "+"
+  },
+  {
+    "id": 22,
+    "text": "Seek adventure.",
+    "domain": "E",
+    "facet": {
+      "number": 5,
+      "name": "Excitement-Seeking"
+    },
+    "keyed": "+"
+  },
+  {
+    "id": 23,
+    "text": "Have a lot of fun.",
+    "domain": "E",
+    "facet": {
+      "number": 6,
+      "name": "Cheerfulness"
+    },
+    "keyed": "+"
+  },
+  {
+    "id": 24,
+    "text": "Love life.",
+    "domain": "E",
+    "facet": {
+      "number": 6,
+      "name": "Cheerfulness"
+    },
+    "keyed": "+"
+  },
+  {
+    "id": 25,
+    "text": "Have a vivid imagination.",
+    "domain": "O",
+    "facet": {
+      "number": 1,
+      "name": "Imagination"
+    },
+    "keyed": "+"
+  },
+  {
+    "id": 26,
+    "text": "Love to daydream.",
+    "domain": "O",
+    "facet": {
+      "number": 1,
+      "name": "Imagination"
+    },
+    "keyed": "+"
+  },
+  {
+    "id": 27,
+    "text": "Believe in the importance of art.",
+    "domain": "O",
+    "facet": {
+      "number": 2,
+      "name": "Artistic Interests"
+    },
+    "keyed": "+"
+  },
+  {
+    "id": 28,
+    "text": "Do not like art.",
+    "domain": "O",
+    "facet": {
+      "number": 2,
+      "name": "Artistic Interests"
+    },
+    "keyed": "-"
+  },
+  {
+    "id": 29,
+    "text": "Experience my emotions intensely.",
+    "domain": "O",
+    "facet": {
+      "number": 3,
+      "name": "Emotionality"
+    },
+    "keyed": "+"
+  },
+  {
+    "id": 30,
+    "text": "Am not easily affected by my emotions.",
+    "domain": "O",
+    "facet": {
+      "number": 3,
+      "name": "Emotionality"
+    },
+    "keyed": "-"
+  },
+  {
+    "id": 31,
+    "text": "Prefer to stick with things that I know.",
+    "domain": "O",
+    "facet": {
+      "number": 4,
+      "name": "Adventurousness"
+    },
+    "keyed": "-"
+  },
+  {
+    "id": 32,
+    "text": "Don't like the idea of change.",
+    "domain": "O",
+    "facet": {
+      "number": 4,
+      "name": "Adventurousness"
+    },
+    "keyed": "-"
+  },
+  {
+    "id": 33,
+    "text": "Avoid philosophical discussions.",
+    "domain": "O",
+    "facet": {
+      "number": 5,
+      "name": "Intellect"
+    },
+    "keyed": "-"
+  },
+  {
+    "id": 34,
+    "text": "Am not interested in theoretical discussions.",
+    "domain": "O",
+    "facet": {
+      "number": 5,
+      "name": "Intellect"
+    },
+    "keyed": "-"
+  },
+  {
+    "id": 35,
+    "text": "Tend to vote for liberal political candidates.",
+    "domain": "O",
+    "facet": {
+      "number": 6,
+      "name": "Liberalism"
+    },
+    "keyed": "+"
+  },
+  {
+    "id": 36,
+    "text": "Believe in one true religion.",
+    "domain": "O",
+    "facet": {
+      "number": 6,
+      "name": "Liberalism"
+    },
+    "keyed": "-"
+  },
+  {
+    "id": 37,
+    "text": "Trust others.",
+    "domain": "A",
+    "facet": {
+      "number": 1,
+      "name": "Trust"
+    },
+    "keyed": "+"
+  },
+  {
+    "id": 38,
+    "text": "Believe that others have good intentions.",
+    "domain": "A",
+    "facet": {
+      "number": 1,
+      "name": "Trust"
+    },
+    "keyed": "+"
+  },
+  {
+    "id": 39,
+    "text": "Cheat to get ahead.",
+    "domain": "A",
+    "facet": {
+      "number": 2,
+      "name": "Morality"
+    },
+    "keyed": "-"
+  },
+  {
+    "id": 40,
+    "text": "Take advantage of others.",
+    "domain": "A",
+    "facet": {
+      "number": 2,
+      "name": "Morality"
+    },
+    "keyed": "-"
+  },
+  {
+    "id": 41,
+    "text": "Love to help others.",
+    "domain": "A",
+    "facet": {
+      "number": 3,
+      "name": "Altruism"
+    },
+    "keyed": "+"
+  },
+  {
+    "id": 42,
+    "text": "Am concerned about others.",
+    "domain": "A",
+    "facet": {
+      "number": 3,
+      "name": "Altruism"
+    },
+    "keyed": "+"
+  },
+  {
+    "id": 43,
+    "text": "Insult people.",
+    "domain": "A",
+    "facet": {
+      "number": 4,
+      "name": "Cooperation"
+    },
+    "keyed": "-"
+  },
+  {
+    "id": 44,
+    "text": "Get back at others.",
+    "domain": "A",
+    "facet": {
+      "number": 4,
+      "name": "Cooperation"
+    },
+    "keyed": "-"
+  },
+  {
+    "id": 45,
+    "text": "Believe that I am better than others.",
+    "domain": "A",
+    "facet": {
+      "number": 5,
+      "name": "Modesty"
+    },
+    "keyed": "-"
+  },
+  {
+    "id": 46,
+    "text": "Think highly of myself.",
+    "domain": "A",
+    "facet": {
+      "number": 5,
+      "name": "Modesty"
+    },
+    "keyed": "-"
+  },
+  {
+    "id": 47,
+    "text": "Sympathize with the homeless.",
+    "domain": "A",
+    "facet": {
+      "number": 6,
+      "name": "Sympathy"
+    },
+    "keyed": "+"
+  },
+  {
+    "id": 48,
+    "text": "Feel sympathy for those who are worse off than myself.",
+    "domain": "A",
+    "facet": {
+      "number": 6,
+      "name": "Sympathy"
+    },
+    "keyed": "+"
+  },
+  {
+    "id": 49,
+    "text": "Handle tasks smoothly.",
+    "domain": "C",
+    "facet": {
+      "number": 1,
+      "name": "Self-Efficacy"
+    },
+    "keyed": "+"
+  },
+  {
+    "id": 50,
+    "text": "Know how to get things done.",
+    "domain": "C",
+    "facet": {
+      "number": 1,
+      "name": "Self-Efficacy"
+    },
+    "keyed": "+"
+  },
+  {
+    "id": 51,
+    "text": "Like order.",
+    "domain": "C",
+    "facet": {
+      "number": 2,
+      "name": "Orderliness"
+    },
+    "keyed": "+"
+  },
+  {
+    "id": 52,
+    "text": "Leave a mess in my room.",
+    "domain": "C",
+    "facet": {
+      "number": 2,
+      "name": "Orderliness"
+    },
+    "keyed": "-"
+  },
+  {
+    "id": 53,
+    "text": "Tell the truth.",
+    "domain": "C",
+    "facet": {
+      "number": 3,
+      "name": "Dutifulness"
+    },
+    "keyed": "+"
+  },
+  {
+    "id": 54,
+    "text": "Break my promises.",
+    "domain": "C",
+    "facet": {
+      "number": 3,
+      "name": "Dutifulness"
+    },
+    "keyed": "-"
+  },
+  {
+    "id": 55,
+    "text": "Work hard.",
+    "domain": "C",
+    "facet": {
+      "number": 4,
+      "name": "Achievement-Striving"
+    },
+    "keyed": "+"
+  },
+  {
+    "id": 56,
+    "text": "Set high standards for myself and others.",
+    "domain": "C",
+    "facet": {
+      "number": 4,
+      "name": "Achievement-Striving"
+    },
+    "keyed": "+"
+  },
+  {
+    "id": 57,
+    "text": "Carry out my plans.",
+    "domain": "C",
+    "facet": {
+      "number": 5,
+      "name": "Self-Discipline"
+    },
+    "keyed": "+"
+  },
+  {
+    "id": 58,
+    "text": "Have difficulty starting tasks.",
+    "domain": "C",
+    "facet": {
+      "number": 5,
+      "name": "Self-Discipline"
+    },
+    "keyed": "-"
+  },
+  {
+    "id": 59,
+    "text": "Make rash decisions.",
+    "domain": "C",
+    "facet": {
+      "number": 6,
+      "name": "Cautiousness"
+    },
+    "keyed": "-"
+  },
+  {
+    "id": 60,
+    "text": "Act without thinking.",
+    "domain": "C",
+    "facet": {
+      "number": 6,
+      "name": "Cautiousness"
+    },
+    "keyed": "-"
+  }
+]
