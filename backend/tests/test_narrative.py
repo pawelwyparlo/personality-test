@@ -53,6 +53,30 @@ def _scores() -> dict:
     return {"run_id": "r", "age": 30, "sex": "male", "domains": domains, "facets": facets}
 
 
+def _quick_scores() -> dict:
+    """A domain-only persisted-scores dict (Quick form: no facets, ADR-0004)."""
+    doms = [
+        ("O", "Openness", 72, "high"),
+        ("C", "Conscientiousness", 84, "high"),
+        ("E", "Extraversion", 38, "low"),
+        ("A", "Agreeableness", 61, "average"),
+        ("N", "Neuroticism", 29, "low"),
+    ]
+    domains = [
+        {
+            "domain": letter,
+            "name": name,
+            "raw": 44,
+            "t_score": 55.0,
+            "percentile": pct,
+            "level": level,
+            "facets": [],
+        }
+        for letter, name, pct, level in doms
+    ]
+    return {"run_id": "q", "age": 30, "sex": "male", "domains": domains, "facets": []}
+
+
 class FakeLLM:
     """Records the last prompt and returns a canned structured object."""
 
@@ -141,3 +165,38 @@ def test_fallback_is_deterministic():
     b = narrative_fallback(_scores())
     assert a == b
     assert a["source"] == "textbank"
+
+
+# --- Quick form: domain-only narratives (no facets, ADR-0004) --------------- #
+
+
+async def test_quick_llm_prompt_has_domains_and_no_facet_lines():
+    """The LLM prompt for a Quick run lists domains only — no facet bullets."""
+    fake = FakeLLM(
+        {
+            "pull_quote": "x",
+            "paragraphs": ["a", "b"],
+            "strengths": ["1", "2", "3"],
+            "watch_outs": ["1", "2", "3"],
+        }
+    )
+    await generate_narrative(
+        _quick_scores(), age=30, sex="male", form="quick", llm=fake
+    )
+    prompt = fake.last_prompt or ""
+    assert "Openness" in prompt
+    assert "72th percentile" in prompt
+    # Facet bullet lines (rendered with a "·" prefix) must be absent.
+    assert "·" not in prompt
+
+
+async def test_quick_fallback_works_without_facets():
+    """Text-bank fallback produces a full body from a facetless scores dict."""
+    out = await generate_narrative(
+        _quick_scores(), age=30, sex="male", form="quick", llm=NullClient()
+    )
+    assert out["source"] == "textbank"
+    assert out["pull_quote"]
+    assert len(out["paragraphs"]) >= 2
+    assert len(out["strengths"]) == 3
+    assert len(out["watch_outs"]) == 3
