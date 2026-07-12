@@ -33,6 +33,25 @@ async def _completed_run(client, age=30, sex="male") -> str:
     return run_id
 
 
+async def _completed_quick_run(client, age=30, sex="female") -> str:
+    prof = await client.post("/api/v1/profiles")
+    profile_id = prof.json()["id"]
+    run = await client.post(
+        "/api/v1/test-runs",
+        json={"profile_id": profile_id, "form": "quick", "age": age, "sex": sex},
+    )
+    run_id = run.json()["id"]
+    for i in range(1, 61):
+        resp = await client.post(
+            f"/api/v1/test-runs/{run_id}/answers",
+            json={"item_id": i, "value": ((i * 7) % 5) + 1},
+        )
+        assert resp.status_code == 204, resp.text
+    done = await client.post(f"/api/v1/test-runs/{run_id}/complete")
+    assert done.status_code == 200, done.text
+    return run_id
+
+
 async def test_report_body_shape(client):
     run_id = await _completed_run(client)
     resp = await client.get(f"/api/v1/reports/{run_id}")
@@ -106,3 +125,38 @@ async def test_pdf_endpoint_returns_valid_pdf(client):
 async def test_pdf_404_for_missing_run(client):
     resp = await client.get(f"/api/v1/reports/{uuid.uuid4()}/pdf")
     assert resp.status_code == 404
+
+
+# --- Quick form: domain-only report + PDF (ADR-0004) ------------------------ #
+
+
+async def test_quick_report_is_domain_only(client):
+    """A Quick report carries 5 domains and NO facets, with a full narrative."""
+    run_id = await _completed_quick_run(client)
+    resp = await client.get(f"/api/v1/reports/{run_id}")
+    assert resp.status_code == 200, resp.text
+    body = resp.json()
+
+    assert body["form"] == "quick"
+    assert len(body["domains"]) == 5
+    assert body["facets"] == []
+    for d in body["domains"]:
+        assert d["facets"] == []
+
+    narr = body["narrative"]
+    assert narr["source"] == "textbank"
+    assert narr["pull_quote"]
+    assert 2 <= len(narr["paragraphs"]) <= 4
+    assert len(narr["strengths"]) == 3
+    assert len(narr["watch_outs"]) == 3
+
+
+async def test_quick_pdf_renders_from_facetless_run(client):
+    """The PDF path handles a facetless (Quick) run and returns valid PDF bytes."""
+    run_id = await _completed_quick_run(client)
+    resp = await client.get(f"/api/v1/reports/{run_id}/pdf")
+    assert resp.status_code == 200, resp.text
+    assert resp.headers["content-type"] == "application/pdf"
+    body = resp.content
+    assert body[:4] == b"%PDF"
+    assert len(body) > 2000

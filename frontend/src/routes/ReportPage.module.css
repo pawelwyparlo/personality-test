@@ -231,6 +231,15 @@
   margin: 6px 0 0;
 }
 
+.quickNote {
+  font-size: 0.78rem;
+  line-height: 1.35;
+  color: var(--color-muted);
+  margin: 16px 0 0;
+  padding-top: 14px;
+  border-top: 1.5px solid var(--border-divider);
+}
+
 /* --- Coach CTA ------------------------------------------------------------ */
 .coachCta {
   border: 2px dashed var(--color-accent);

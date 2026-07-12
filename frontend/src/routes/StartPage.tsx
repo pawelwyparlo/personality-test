@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router'
 import { api } from '../api/client'
 import { ensureProfileId } from '../api/profile'
 import { TEST_MODE } from '../config'
+import type { Form } from '../api/types'
 import { useRunStore } from '../store/runStore'
 import styles from './StartPage.module.css'
 
@@ -16,6 +17,8 @@ export function StartPage() {
   // Test mode prefills demographics so a run can begin in one click.
   const [age, setAge] = useState<string>(TEST_MODE ? '30' : '')
   const [sex, setSex] = useState<Sex>(TEST_MODE ? 'male' : '')
+  // Full is the default (recommended) length; the person can switch to Quick.
+  const [form, setForm] = useState<Form>('full')
   const [starting, setStarting] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
@@ -30,8 +33,8 @@ export function StartPage() {
     try {
       const profileId = await ensureProfileId()
       const [{ id: runId }, formData] = await Promise.all([
-        api.createTestRun({ profile_id: profileId, form: 'full', age: ageNum, sex }),
-        api.getFormItems('full'),
+        api.createTestRun({ profile_id: profileId, form, age: ageNum, sex }),
+        api.getFormItems(form),
       ])
       start(runId, formData.items)
       navigate('/test')
@@ -66,28 +69,30 @@ export function StartPage() {
 
         <div className={styles.pickLabel}>Pick your length</div>
         <div className={styles.cards}>
-          {/* Quick is disabled until PR6 (ADR-0004): coming soon, not selectable. */}
-          <div
-            className={`${styles.card} ${styles.cardDisabled}`}
-            aria-disabled="true"
+          <button
+            type="button"
+            className={`${styles.card} ${form === 'quick' ? styles.cardSelected : ''}`}
+            aria-pressed={form === 'quick'}
+            onClick={() => setForm('quick')}
           >
-            <span className={`${styles.badge} ${styles.badgeMuted}`}>
-              Coming soon
-            </span>
             <div className={styles.cardHead}>
               <span className={styles.cardTitle}>Quick</span>
               <span className={styles.cardMeta}>~10 min</span>
             </div>
             <div className={styles.cardCount}>60 statements</div>
-            <div className={styles.cardRule} />
+            <div
+              className={`${styles.cardRule} ${form === 'quick' ? styles.cardRuleTint : ''}`}
+            />
             <div className={styles.cardDesc}>
               Solid five-trait scores. Great for a first read.
             </div>
-          </div>
+          </button>
 
-          <div
-            className={`${styles.card} ${styles.cardSelected}`}
-            aria-pressed="true"
+          <button
+            type="button"
+            className={`${styles.card} ${form === 'full' ? styles.cardSelected : ''}`}
+            aria-pressed={form === 'full'}
+            onClick={() => setForm('full')}
           >
             <span className={styles.badge}>Recommended</span>
             <div className={styles.cardHead}>
@@ -95,11 +100,13 @@ export function StartPage() {
               <span className={styles.cardMeta}>~20 min</span>
             </div>
             <div className={styles.cardCount}>120 statements</div>
-            <div className={`${styles.cardRule} ${styles.cardRuleTint}`} />
+            <div
+              className={`${styles.cardRule} ${form === 'full' ? styles.cardRuleTint : ''}`}
+            />
             <div className={styles.cardDesc}>
               Adds facet-level nuance and a richer report + coach.
             </div>
-          </div>
+          </button>
         </div>
 
         <div className={styles.demographics}>
@@ -142,7 +149,11 @@ export function StartPage() {
           onClick={handleStart}
           disabled={!demographicsValid || starting}
         >
-          {starting ? 'Starting…' : 'Start the Full test →'}
+          {starting
+            ? 'Starting…'
+            : form === 'quick'
+              ? 'Start the Quick test →'
+              : 'Start the Full test →'}
         </button>
         {error && <div className={styles.error}>{error}</div>}
         {TEST_MODE && (

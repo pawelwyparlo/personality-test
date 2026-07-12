@@ -145,7 +145,10 @@ matching item number in Johnson's IPIP-NEO-120 where the text is identical (see
 | C6 Cautiousness | − | Make rash decisions. | 60 |
 | C6 Cautiousness | − | Act without thinking. | 120 |
 
-**Reverse-keyed count:** 24 of 60 items are negatively keyed (marked "−" above).
+**Reverse-keyed count:** the prose summary on ipip.ori.org says "24 of 60," but
+the per-item scoring key above enumerates exactly **23** negatively-keyed items
+(marked "−"). The 23 in the table is authoritative and is what the item bank
+ships; see the keying-count note in `docs/adr/0004-quick-form-ipip-neo-60-derived-norms.md`.
 
 ---
 
@@ -282,8 +285,9 @@ item set and its own norms — not as a subset view of the 120.**
 Concretely:
 
 1. **Items.** Ship all 60 items exactly as in [Section 2](#2-the-exact-60-items) (verbatim from
-   the ipip.ori.org scoring key). Store facet + keying per item. 24 are reverse-keyed. Do not try
-   to reuse the 120's item file — 9 items aren't in it.
+   the ipip.ori.org scoring key). Store facet + keying per item. 23 are reverse-keyed (the
+   per-item table above; the site's prose "24" is superseded). Do not try to reuse the 120's
+   item file — 9 items aren't in it.
 2. **Scoring.** Domain = sum of 12 items; facet = sum of 2 items; reverse "−" items first
    (6 − raw on a 1–5 scale). Mirror the 120 pipeline's raw-scale convention for consistency.
    Lead with **domain** scores; caveat or de-emphasize 2-item facet percentiles.

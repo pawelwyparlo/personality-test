@@ -10,6 +10,7 @@ from __future__ import annotations
 import pytest
 
 from app.scoring.engine import score
+from app.scoring.engine_quick import score as score_quick
 from app.scoring.serialize import score_result_to_dict
 
 pytestmark = pytest.mark.asyncio
@@ -41,14 +42,66 @@ async def test_create_profile_and_run(client):
     assert body["scores"] is None
 
 
-async def test_quick_form_not_implemented(client):
+async def test_quick_run_reports_item_count_60(client):
     prof = await client.post("/api/v1/profiles")
     profile_id = prof.json()["id"]
     run = await client.post(
         "/api/v1/test-runs",
         json={"profile_id": profile_id, "form": "quick", "age": 30, "sex": "male"},
     )
-    assert run.status_code == 501
+    assert run.status_code == 201
+    assert run.json()["item_count"] == 60
+
+    got = await client.get(f"/api/v1/test-runs/{run.json()['id']}")
+    assert got.json()["item_count"] == 60
+
+
+async def test_quick_run_happy_path_matches_engine(client):
+    """A full Quick run scores domain-only, matching the pure quick engine."""
+    age, sex = 30, "female"
+    prof = await client.post("/api/v1/profiles")
+    profile_id = prof.json()["id"]
+    run = await client.post(
+        "/api/v1/test-runs",
+        json={"profile_id": profile_id, "form": "quick", "age": age, "sex": sex},
+    )
+    run_id = run.json()["id"]
+
+    answers = {i: ((i * 7) % 5) + 1 for i in range(1, 61)}
+    for item_id, value in answers.items():
+        resp = await client.post(
+            f"/api/v1/test-runs/{run_id}/answers",
+            json={"item_id": item_id, "value": value},
+        )
+        assert resp.status_code == 204, resp.text
+
+    resp = await client.post(f"/api/v1/test-runs/{run_id}/complete")
+    assert resp.status_code == 200, resp.text
+    body = resp.json()
+
+    expected = score_result_to_dict(score_quick(answers, age, sex), run_id)
+    assert body["domains"] == expected["domains"]
+    assert len(body["domains"]) == 5
+    # Domain-only (ADR-0004): no facets are ever produced on a Quick run.
+    assert body["facets"] == []
+    for d in body["domains"]:
+        assert d["facets"] == []
+
+
+async def test_quick_run_rejects_full_only_item(client):
+    """Item ids past 60 are unknown to the Quick form (60 items only)."""
+    prof = await client.post("/api/v1/profiles")
+    profile_id = prof.json()["id"]
+    run = await client.post(
+        "/api/v1/test-runs",
+        json={"profile_id": profile_id, "form": "quick", "age": 30, "sex": "male"},
+    )
+    run_id = run.json()["id"]
+    resp = await client.post(
+        f"/api/v1/test-runs/{run_id}/answers",
+        json={"item_id": 61, "value": 3},
+    )
+    assert resp.status_code == 422
 
 
 async def test_age_out_of_range_rejected(client):

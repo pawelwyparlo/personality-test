@@ -50,3 +50,19 @@ With `VITE_TEST_MODE=true` the Start screen prefills demographics and the Test
 screen shows an "⚡ Autofill & finish" control — see the repo `README.md`
 Testing section. The flag is read in `src/config.ts`; unset, the controls are
 absent from the DOM.
+
+## End-to-end (Playwright)
+
+`@playwright/test` is a host-side devDependency (it runs on your machine, not in
+the container). One spec, `e2e/happy-path.spec.ts`, drives the running Compose
+stack through the Quick form: start → select Quick → autofill 60 items → assert
+the domain-only report (5 bars + narrative) → verify the PDF endpoint returns
+`%PDF`. `playwright.config.ts` reads `FRONTEND_URL` (default
+`http://localhost:15173`) and does **not** start its own server, so the stack
+must be up with `VITE_TEST_MODE=true`.
+
+```bash
+npm install            # pulls @playwright/test
+npm run e2e:install    # one-time: download the Chromium browser
+npm run e2e            # run the spec against the running stack
+```

@@ -26,11 +26,17 @@ Full sourcing and item text: `docs/research/ipip-neo-60.md`.
 
 ## Consequences
 
-- The scoring engine gains a Quick path that shares the keying/T-score/percentile machinery but
-  loads a separate 60-item bank and a separate domain-only norm set.
-- Until the Quick bank + derived norms land (PR6), `GET /forms/quick/items` returns **501 Not
-  Implemented** and the start-screen Quick card is disabled. If deriving trustworthy norms proves
-  infeasible, the documented fallback is to ship Full-only and leave Quick permanently "coming
-  soon" (see `docs/PLAN.md` risks).
+- The scoring engine gains a Quick path (`app/scoring/engine_quick.py`) that shares the
+  keying/T-score/percentile machinery but loads a separate 60-item bank
+  (`app/scoring/data/ipip_neo_60.json`) and a separate domain-only norm set
+  (`app/scoring/data/norms_60_domains.json`, derived by `backend/scripts/derive_norms60.py`;
+  method in `docs/research/ipip-neo-60-norms.md`).
+- Landed in PR6: `GET /forms/quick/items` serves the 60 items (keying stripped) and
+  `POST /test-runs` accepts `form="quick"`; completion scores domain-only. The start-screen Quick
+  card is selectable.
+- **Keying count.** The source's prose summary says "24 of 60 items are negatively keyed," but the
+  authoritative per-item scoring key (ipip.ori.org) and the research doc's own item table both
+  enumerate exactly **23** reverse-keyed items. The bank uses the verified per-item keying (23); we
+  did not invent a 24th reverse item.
 - No copyrighted items are used: the NEO-FFI-60 is explicitly rejected in favour of the
   public-domain IPIP replacement.

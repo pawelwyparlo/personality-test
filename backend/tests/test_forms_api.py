@@ -38,10 +38,25 @@ async def test_full_form_does_not_leak_keying_or_facet_internals():
 
 
 @pytest.mark.asyncio
-async def test_quick_form_returns_501():
+async def test_quick_form_returns_60_items():
     async with _client() as client:
         resp = await client.get("/api/v1/forms/quick/items")
-    assert resp.status_code == 501
+    assert resp.status_code == 200
+    body = resp.json()
+    assert body["form"] == "quick"
+    assert body["count"] == 60
+    assert len(body["items"]) == 60
+
+
+@pytest.mark.asyncio
+async def test_quick_form_does_not_leak_keying_or_facet_internals():
+    async with _client() as client:
+        resp = await client.get("/api/v1/forms/quick/items")
+    items = resp.json()["items"]
+    for it in items:
+        assert set(it) == {"id", "text", "domain"}
+        assert "keyed" not in it
+        assert "facet" not in it
 
 
 @pytest.mark.asyncio

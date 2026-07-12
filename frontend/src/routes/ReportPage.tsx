@@ -211,6 +211,11 @@ export function ReportPage() {
                 <p className={styles.descriptor}>{DESCRIPTORS[d.domain]}</p>
               </div>
             ))}
+            {report.form === 'quick' ? (
+              <p className={styles.quickNote}>
+                Quick test — the Full test adds facet-level nuance.
+              </p>
+            ) : null}
           </div>
 
           <div className={styles.coachCta}>
