@@ -20,6 +20,12 @@ __pycache__/
 .mypy_cache/
 .ruff_cache/
 
+# Playwright (host-side e2e)
+frontend/test-results/
+frontend/playwright-report/
+frontend/blob-report/
+frontend/.playwright/
+
 # Editor / OS
 .DS_Store
 .idea/
